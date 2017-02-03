@@ -3,7 +3,7 @@ import re
 
 ## SI 206 - W17 - HW3
 ## COMMENT WITH:
-## Your section day/time:
+## Your section day/time:Thursday 3-4 P.M.
 ## Any names of people you worked with on this assignment:
 
 #####################
@@ -20,6 +20,10 @@ import re
 
 ## Write code to define your parse_counted_words function here.
 
+def parse_counted_words(input):
+    valid_combo = (re.findall("^\d+\s.+[a-zA-Z]",input))
+    valid_combo.group(-1, -2)
+    return valid_combo
 
 
 
