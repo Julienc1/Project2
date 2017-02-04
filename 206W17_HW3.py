@@ -20,18 +20,44 @@ import re
 
 ## Write code to define your parse_counted_words function here.
 
-def parse_counted_words(input):
-    valid_combo = (re.findall("^\d+\s.+[a-zA-Z]",input))
-    valid_combo.group(-1, -2)
-    return valid_combo
+def parse_counted_words(x):
+    list1 =""
+    valid_combo = (re.findall("\d+\s.[a-zA-Z]+",x))
+    if len(valid_combo) > 0:
+        list1 = valid_combo[-1]
+        y = tuple(list1.split())
+        return y
 
 
+
+
+
+
+    
+
+
+    
+
+
+
+x = parse_counted_words('5 watermelons, 13 pineapples, and 1 papaya.')
+print(x)
 
 ## PART 2: 200 points
 
 ## We have provided a text file computer_paths.txt. It's not incredibly long -- you can scan through it, but do NOT hard code your answers! Each line contains 1 filesystem path.
 
 ## (a) Write Python code to determine how many of these paths identify FILES, not directories. Save that number in the variable file_paths_num.
+file1 = open('computer_paths.txt')
+list1 = []
+for line in file1:
+    line = line.rstrip()
+    if re.findall("^\b\w", line):
+        list1.append(line)
+file_paths_num = len(list1)
+
+
+
 
 ## (b) Write Python code to determine how many of these paths are FULL paths, not relative paths. Save that number in the variable full_paths_num.
 
