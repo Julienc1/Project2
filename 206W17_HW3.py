@@ -82,7 +82,14 @@ python_course_paths = len(list3)
 
 
 ## (d) Write Python code to determine how many of these paths describe a Microsoft file (a file that EITHER ends with .docx OR .xlsx, but nothing else counts) where the file name ends in a digit. Save that total in the variable microsoft_files_num.
+file4 = open('computer_paths.txt')
+list4 = []
+for line in file4:
+    line = line.rstrip()
+    if re.findall("[0-9]\.(docx|xlsx)", line):
+        list4.append(line)
 
+microsoft_files_num = len(list4)
 
 
 
