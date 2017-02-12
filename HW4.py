@@ -85,6 +85,7 @@ soup = BeautifulSoup(htmldoc,"html.parser")
 people = soup.find_all("div",{"class":"views-row"})
 umsi_titles = {}
 
+
 ## It may be helpful to translate the following from English to code:
 #functions to use
 #soup.find_all(id="link2")("title")("a", class_="sister")(attrs={"data-foo": "value"}) instead of data-foo is property and value is ?DC_title?
@@ -98,13 +99,21 @@ si_list_2 = []
 
 for name in soup.find_all(attrs={"property": "dc:title"}):
 	si_list.append(name.text)
-for person in soup.findall("div",{"class":"field-item even"}):
-	print(person.text)
+
+person1 = soup.find_all("div", {"class":"field-item even"})
+x = 3
+while x <= 79:
+	for title in person1[x]:
+		si_list_2.append(title)
+		
+		x+=4
+umsi_titles = dict(zip(si_list, si_list_2))
 
 
 
 
-	
+
+
 
 
 
