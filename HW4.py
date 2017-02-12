@@ -35,6 +35,7 @@ for story_heading in soup.find_all(class_="story-heading"):
 		nytimes_headlines.append(story_heading.text)
 		i+=1
 
+
 ## Note that you will almost certainly need to do some investigation on the http://nytimes.com website to do this correctly, even after saving the file in Part 1.
 
 ## The strings that should be elements of your lists will be different depending upon when you accessed the data, but they should probably be somewhat like this:
@@ -77,7 +78,9 @@ for story_heading in soup.find_all(class_="story-heading"):
 
 response = requests.get("https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All")
 htmldoc = response.text
-
+file1 = open("SI.html", "w")
+file1.write(htmldoc)
+file1.close()
 soup = BeautifulSoup(htmldoc,"html.parser")
 people = soup.find_all("div",{"class":"views-row"})
 umsi_titles = {}
@@ -90,8 +93,18 @@ umsi_titles = {}
 ## Find the container that holds the name that belongs to that person (HINT: look for something unique, like a property element...)
 ## Find the container that holds the title that belongs to that person (HINT: a class name)
 ## Grab the text of each of those elements and put them in the dictionary umsi_titles properly
-#for person in people:
-	#soup.find_all(class_="field-item even"): 
+si_list = []
+si_list_2 = []
+
+for name in soup.find_all(attrs={"property": "dc:title"}):
+	si_list.append(name.text)
+for person in soup.findall("div",{"class":"field-item even"}):
+	print(person.text)
+
+
+
+
+	
 
 
 
