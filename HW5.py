@@ -126,8 +126,17 @@ while k <3:
 			list2.append(val)
 			k+=1
 			
-print(list1)
-print(list2)		
+
+print("TEXT: " + list2[0])
+print("CREATED AT: " + list1[0])
+print("\n")
+print("TEXT: " + list2[1])
+print("CREATED AT: " + list1[1])
+print("\n")
+print("TEXT: " + list2[2])
+print("CREATED AT: " + list1[2])
+print("\n")
+
 
 
 
