@@ -111,14 +111,23 @@ input1 = input("Enter search term: ")
 #	f.close()
 
 ps = get_tweet_data(input1)
-
-i=1
-while i <= 3:
-	for tweet in ps["statuses"]:
-		print("TEXT: " + tweet["text"])
-		for date in ps["statuses"]:
-			print("CREATED AT: " + date["created_at"])
+i = 0
+list1 = []
+list2 = []
+while i <3:
+	for key, val in (ps["statuses"][i].items()):
+		if key == "created_at":
+			list1.append(val)
 			i+=1
+k=0
+while k <3:
+	for key, val in (ps["statuses"][i].items()):
+		if key == "text":
+			list2.append(val)
+			k+=1
+			
+print(list1)
+print(list2)		
 
 
 
