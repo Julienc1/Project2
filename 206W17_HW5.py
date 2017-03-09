@@ -5,8 +5,8 @@ import json
 
 ## SI 206 - W17 - HW5
 ## COMMENT WITH:
-## Your section day/time:
-## Any names of people you worked with on this assignment:
+## Your section day/time:Thursday 3-4 P.M.
+## Any names of people you worked with on this assignment:N/A
 
 ######## 500 points total ########
 
@@ -35,10 +35,10 @@ import json
 ## **** If you choose not to do that, we strongly advise using authentication information for an 'extra' Twitter account you make just for this class, and not your personal account, because it's not ideal to share your authentication information for a real account that you use frequently.
 
 ## Get your secret values to authenticate to Twitter. You may replace each of these with variables rather than filling in the empty strings if you choose to do the secure way for 50 EC points
-consumer_key = "" 
-consumer_secret = ""
-access_token = ""
-access_token_secret = ""
+consumer_key = "NEjeGQrEqAvyMBhZSh9MJ3c98" 
+consumer_secret = "jDMPTDipmpN8EmWXzKhNbMrLGjfLSFAYnNl3LesYWyCEFqLF5z"
+access_token = "430314150-xczwLPEvmHXNov5hFjMJ3dKsZICUNn3mBL2qCIfg"
+access_token_secret = "ueqvbuHr34kTdnvhxHIeGuvILUfYaCP5KkwySFL1aWN3m"
 ## Set up your authentication to Twitter
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
@@ -51,6 +51,92 @@ api = tweepy.API(auth, parser=tweepy.parsers.JSONParser()) # Set up library to g
 ## 2. Write a function to get twitter data that works with the caching pattern, so it either gets new data or caches data, depending upon what the input to search for is. You can model this off the class exercise from Tuesday.
 ## 3. Invoke your function, save the return value in a variable, and explore the data you got back!
 ## 4. With what you learn from the data -- e.g. how exactly to find the text of each tweet in the big nested structure -- write code to print out content from 3 tweets, as shown above.
+
+CACHE_FNAME = 'tweets.json' # String for your file. We want the JSON file type, because that way, we can easily get the information into a Python dictionary!
+try:
+    cache_file = open(CACHE_FNAME, 'r') # Try to read the data from the file
+    cache_contents = cache_file.read() # If it's there, get it into a string
+    CACHE_DICTION = json.loads(cache_contents) # And then load it into a dictionary
+    cache_file.close() # Close the file, we're good, we got the data in a dictionary.
+except:
+    CACHE_DICTION = {}
+
+
+def get_tweet_data(phrase):
+        unique_identifier = "twitter_{}".format(phrase)
+        if unique_identifier in CACHE_DICTION:
+                 twitter_results = CACHE_DICTION[unique_identifier]
+                 return twitter_results
+        else:
+                 twitter_results = api.search(phrase)
+                 CACHE_DICTION[unique_identifier] = twitter_results
+                 f = open(CACHE_FNAME,'w')
+                 f.write(json.dumps(CACHE_DICTION))
+                 f.close()
+                 return twitter_results
+
+
+#ps = get_tweet_data("python")
+#print(ps)
+
+def canonical_order(d):
+    alphabetized_keys = sorted(d.keys())
+    res = []
+    for k in alphabetized_keys:
+        res.append((k, d[k]))
+    return res
+    
+# This is the function that actually builds each URL to make a request with, so we can say "Have we made a request with this URL before?" It invokes the  canonical_order function in the process.
+def requestURL(baseurl, params = {}):
+    req = requests.Request(method = 'GET', url = baseurl, params = canonical_order(params))
+    prepped = req.prepare()
+    return prepped.url
+
+
+song_d = json.dumps(CACHE_DICTION, indent = 2)
+#print(song_d)
+
+input1 = input("Enter search term: ")
+#public_tweets = api.search(q=input1)
+
+#try:
+#	x = open('tweets.json', 'r')
+#	cache_contents = cache_file.read()
+#	cached_data = json.loads(x.read())
+#	x.close()
+#except:
+	
+#	f = open('tweets.json', 'w')
+#	f.write(json.dumps(public_tweets))
+#	f.close()
+
+ps = get_tweet_data(input1)
+i = 0
+list1 = []
+list2 = []
+while i <3:
+	for key, val in (ps["statuses"][i].items()):
+		if key == "created_at":
+			list1.append(val)
+			i+=1
+k=0
+while k <3:
+	for key, val in (ps["statuses"][i].items()):
+		if key == "text":
+			list2.append(val)
+			k+=1
+			
+
+print("TEXT: " + list2[0])
+print("CREATED AT: " + list1[0])
+print("\n")
+print("TEXT: " + list2[1])
+print("CREATED AT: " + list1[1])
+print("\n")
+print("TEXT: " + list2[2])
+print("CREATED AT: " + list1[2])
+print("\n")
+
 
 
 
