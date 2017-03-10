@@ -57,7 +57,7 @@ def find_urls(s):
 	return url_strings
 
 
-print(find_urls("I love looking at websites like http://etsy.com and http://instagram.com and stuff"))
+
 
 
 ## PART 2 (a) - Define a function called get_umsi_data.
@@ -69,15 +69,68 @@ print(find_urls("I love looking at websites like http://etsy.com and http://inst
 
 ## Start with this page: https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All  
 ## End with this page: https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All&page=11 
+def get_umsi_data():
+	html_list =[]
+	for i in range(13):
+
+		if i == 0:
+			base_url = "https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All"
+			unique_identifier = requests.get(base_url, headers={'User-Agent': 'SI_CLASS'})
+		if i > 0:
+			base_url = "https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All&page=".format(i)
+			unique_identifier = requests.get(base_url, headers={'User-Agent': 'SI_CLASS'})
 
 
+	
 
+
+			if "umsi_directory_data" in CACHE_DICTION:
+				html_list.append(CACHE_DICTION["umsi_directory_data"])
+				
+			else:
+				response_data = unique_identifier.text
+				#python_obj_data = json.loads(response_data)
+				CACHE_DICTION["umsi_directory_data"] = response_data
+				f = open(CACHE_FNAME, 'w')
+				f.write(json.dumps(CACHE_DICTION))
+				f.close()
+				html_list.append(CACHE_DICTION["umsi_directory_data"])
+	return html_list
+
+		
 
 
 
 
 ## PART 2 (b) - Create a dictionary saved in a variable umsi_titles 
 ## whose keys are UMSI people's names, and whose associated values are those people's titles, e.g. "PhD student" or "Associate Professor of Information"...
+umsi_titles = {}
+si_list = []
+si_list_2 = []
+for i in range(13):
+
+	if i == 0:
+		base_url = "https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All"
+		unique_identifier = requests.get(base_url, headers={'User-Agent': 'SI_CLASS'})
+	if i > 0:
+		base_url = "https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All&page=".format(i)
+		unique_identifier = requests.get(base_url, headers={'User-Agent': 'SI_CLASS'})
+	response_data = CACHE_DICTION["umsi_directory_data"]
+	soup = BeautifulSoup(response_data,"html.parser")
+	people = soup.find_all("div",{"class":"views-row"})
+	for name in soup.find_all(attrs={"property": "dc:title"}):
+		si_list.append(name.text)
+	
+
+#umsi_titles = dict(zip(si_list, si_list_2))
+
+#print(len(umsi_titles))
+print(len(si_list))
+
+
+
+
+
 
 
 
@@ -89,7 +142,25 @@ print(find_urls("I love looking at websites like http://etsy.com and http://inst
 ## INPUT: Any string
 ## Behavior: See instructions. Should search for the input string on twitter and get results. Should check for cached data, use it if possible, and if not, cache the data retrieved.
 ## RETURN VALUE: A list of strings: A list of just the text of 5 different tweets that result from the search.
+def get_five_tweets(phrase):
+	unique_identifier = "twitter_{}".format(phrase)
+	if "twitter_University of Michigan" in CACHE_DICTION:
+		twitter_results = CACHE_DICTION["twitter_University of Michigan"]
+                 
+	else:
+		twitter_results = api.search(phrase)
+		CACHE_DICTION["twitter_University of Michigan"] = twitter_results
+	k=0
+	while k <3:
 
+		for key, val in (twitter_results["statuses"][i].items()):
+			if key == "text":
+				list2.append(val)
+				k+=1
+	print(list2)
+	return list2
+        
+                 
 
 
 
