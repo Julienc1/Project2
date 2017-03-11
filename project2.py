@@ -71,34 +71,45 @@ def find_urls(s):
 ## End with this page: https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All&page=11 
 def get_umsi_data():
 	html_list =[]
-	for i in range(13):
+	i=0
+	for i in range(12):
 
 		if i == 0:
 			base_url = "https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All"
 			unique_identifier = requests.get(base_url, headers={'User-Agent': 'SI_CLASS'})
+			response_data = unique_identifier.text
+			#python_obj_data = json.loads(response_data)
+			CACHE_DICTION["umsi_directory_data"] = response_data
+			f = open(CACHE_FNAME, 'w')
+			f.write(json.dumps(CACHE_DICTION))
+			f.close()
+			html_list.append(CACHE_DICTION["umsi_directory_data"])
 		if i > 0:
-			base_url = "https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All&page=".format(i)
+			base_url = "https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All&page="+str(i)
 			unique_identifier = requests.get(base_url, headers={'User-Agent': 'SI_CLASS'})
+			
+			
 
 
 	
 
 
-			if "umsi_directory_data" in CACHE_DICTION:
-				html_list.append(CACHE_DICTION["umsi_directory_data"])
+		#if "umsi_directory_data" in CACHE_DICTION:
+			#html_list.append(CACHE_DICTION["umsi_directory_data"])
 				
-			else:
-				response_data = unique_identifier.text
-				#python_obj_data = json.loads(response_data)
-				CACHE_DICTION["umsi_directory_data"] = response_data
-				f = open(CACHE_FNAME, 'w')
-				f.write(json.dumps(CACHE_DICTION))
-				f.close()
-				html_list.append(CACHE_DICTION["umsi_directory_data"])
+		#else:
+			response_data = unique_identifier.text
+			#python_obj_data = json.loads(response_data)
+			CACHE_DICTION["umsi_directory_data"] = response_data
+			f = open(CACHE_FNAME, 'w')
+			f.write(json.dumps(CACHE_DICTION))
+			f.close()
+			html_list.append(CACHE_DICTION["umsi_directory_data"])
 	return html_list
 
 		
 
+ps = get_umsi_data()
 
 
 
@@ -107,25 +118,26 @@ def get_umsi_data():
 umsi_titles = {}
 si_list = []
 si_list_2 = []
-for i in range(13):
+one_string = ''.join(map(str, ps))
 
-	if i == 0:
-		base_url = "https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All"
-		unique_identifier = requests.get(base_url, headers={'User-Agent': 'SI_CLASS'})
-	if i > 0:
-		base_url = "https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All&page=".format(i)
-		unique_identifier = requests.get(base_url, headers={'User-Agent': 'SI_CLASS'})
-	response_data = CACHE_DICTION["umsi_directory_data"]
-	soup = BeautifulSoup(response_data,"html.parser")
-	people = soup.find_all("div",{"class":"views-row"})
-	for name in soup.find_all(attrs={"property": "dc:title"}):
-		si_list.append(name.text)
+
+soup = BeautifulSoup(one_string,"html.parser")
+people = soup.find_all("div",{"class":"views-row"})
+for name in soup.find_all(attrs={"property": "dc:title"}):
+	si_list.append(name.text)
+person1 = soup.find_all("div", {"class":"views-row"})
+for item in person1:
+	title = item.find("div", {"field-name-field-person-titles"})
+	si_list_2.append(title.text)
+	
+		
+
 	
 
-#umsi_titles = dict(zip(si_list, si_list_2))
+umsi_titles = dict(zip(si_list, si_list_2))
 
-#print(len(umsi_titles))
-print(len(si_list))
+print(umsi_titles)
+#print(si_list_2)
 
 
 
