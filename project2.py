@@ -136,7 +136,7 @@ for item in person1:
 
 umsi_titles = dict(zip(si_list, si_list_2))
 
-print(umsi_titles)
+#print(umsi_titles)
 #print(si_list_2)
 
 
@@ -155,34 +155,41 @@ print(umsi_titles)
 ## Behavior: See instructions. Should search for the input string on twitter and get results. Should check for cached data, use it if possible, and if not, cache the data retrieved.
 ## RETURN VALUE: A list of strings: A list of just the text of 5 different tweets that result from the search.
 def get_five_tweets(phrase):
-	unique_identifier = "twitter_{}".format(phrase)
-	if "twitter_University of Michigan" in CACHE_DICTION:
-		twitter_results = CACHE_DICTION["twitter_University of Michigan"]
-                 
+	tweet_list = []
+	unique_identifier = "twitter_{}".format(phrase) # seestring formatting chapter
+	# see if that username+twitter is in the cache diction!
+	if unique_identifier in CACHE_DICTION: # if it is...
+		
+		twitter_results = CACHE_DICTION[unique_identifier] # grab the data from the cache!
 	else:
-		twitter_results = api.search(phrase)
-		CACHE_DICTION["twitter_University of Michigan"] = twitter_results
-	k=0
-	while k <3:
+		twitter_results = api.search(q=phrase)
+		 # get it from the internet
+		# but also, save in the dictionary to cache it!
+		CACHE_DICTION[unique_identifier] = twitter_results
 
-		for key, val in (twitter_results["statuses"][i].items()):
-			if key == "text":
-				list2.append(val)
-				k+=1
-	print(list2)
-	return list2
+	f = open(CACHE_FNAME, 'w')
+	f.write(json.dumps(CACHE_DICTION))
+	f.close()
+
+	for tweet in twitter_results["statuses"]:
+		tweet_list.append(tweet["text"])
+	return tweet_list[:5]
         
                  
 
 
 
 ## PART 3 (b) - Write one line of code to invoke the get_five_tweets function with the phrase "University of Michigan" and save the result in a variable five_tweets.
-
+five_tweets = get_five_tweets("University of Michigan")
 
 
 
 ## PART 3 (c) - Iterate over the five_tweets list, invoke the find_urls function that you defined in Part 1 on each element of the list, and accumulate a new list of each of the total URLs in all five of those tweets in a variable called tweet_urls_found. 
-
+tweet_urls_found1 = []
+for tweet in five_tweets:
+	for url in find_urls(tweet):
+		tweet_urls_found1.append(url)
+tweet_urls_found = tuple(tweet_urls_found1)
 
 
 
